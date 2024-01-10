@@ -6,10 +6,10 @@ const app = express();//create an express application
 app.listen(3000); // listen for web requests from the frontend and don't stop
 
 const boxes = [
-{boxId:1},
-{boxId:2},
-{boxId:3},
-{boxId:4},
+    {boxId:1},
+    {boxId:2},
+    {boxId:3},
+    {boxId:4},
 ];
 //1-url
 //2- a function to return boxes
