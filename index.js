@@ -1,6 +1,6 @@
 const express = require('express');//express make apis - connect frontend to database
-const Redis =require('redis');//import the Redis library
-
+const Redis = require('redis');//import the Redis library
+const bodyParser = require('body-parser');//body parser pass the request from JS to JSon
 
 const redisClient =Redis.createClient({
     url:`redis://localhost:6379`
@@ -9,10 +9,20 @@ const redisClient =Redis.createClient({
 
 const app = express();//create an express application
 const port =3000; //port number
+
+app.use(bodyParser.json());
+
 app.listen(port,()=>{
-    redisClient.connect();
+    redisClient.connect();//connect to the database
     console.log (`API is Listening on port:${port}`);
 }); // listen for web requests from the frontend and don't stop
+
+app.post('/boxes',async (req,res)=>{//async means we wait for the promise
+    const newBox = req.body;//created new box
+    newBox.id= parseInt(await redisClient.json.arrLen('boxes','$'))+1;// defult box id, user can't change it
+    await redisClient.json.arrAppend('boxes','$',newBox);//save the json in redis
+    res.json(newBox);//respond with the new box
+});
 
 // const boxes = [
 
@@ -30,4 +40,6 @@ app.get('/boxes', async (req,res)=>{//return boxes to the user\
     //send boxes to the browser
     res.send(JSON.stringify(boxes));//convert boes to a string
 }); //return boxes to user
+
+
 console.log("Hello");
