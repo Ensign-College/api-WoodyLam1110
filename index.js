@@ -2,7 +2,8 @@ const express = require('express');//express make apis - connect frontend to dat
 const Redis = require('redis');//import the Redis library
 const bodyParser = require('body-parser');//body parser pass the request from JS to JSon
 const cors = require('cors');
-
+const options ={
+    origin:"http://localhost:3000"}
 
 const redisClient =Redis.createClient({
     url:`redis://localhost:6379`
@@ -13,7 +14,7 @@ const app = express();//create an express application
 const port =3001; //port number
 
 app.use(bodyParser.json());
-app.use(cors(Options));
+app.use(cors(options));
 
 app.listen(port,()=>{
     redisClient.connect();//connect to the database
@@ -41,7 +42,7 @@ app.post('/boxes',async (req,res)=>{//async means we wait for the promise
 app.get('/boxes', async (req,res)=>{//return boxes to the user\
     let boxes = await redisClient.json.get('boxes',{path:'$'});//get the boxes
     //send boxes to the browser
-    res.send(JSON.stringify(boxes));//convert boes to a string
+    res.json(boxes[0]);//convert boes to a string
 }); //return boxes to user
 
 
