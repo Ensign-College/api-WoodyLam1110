@@ -1,6 +1,8 @@
 const express = require('express');//express make apis - connect frontend to database
 const Redis = require('redis');//import the Redis library
 const bodyParser = require('body-parser');//body parser pass the request from JS to JSon
+const cors = require('cors');
+
 
 const redisClient =Redis.createClient({
     url:`redis://localhost:6379`
@@ -8,9 +10,10 @@ const redisClient =Redis.createClient({
 });
 
 const app = express();//create an express application
-const port =3000; //port number
+const port =3001; //port number
 
 app.use(bodyParser.json());
+app.use(cors(Options));
 
 app.listen(port,()=>{
     redisClient.connect();//connect to the database
