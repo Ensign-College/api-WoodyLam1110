@@ -3,7 +3,7 @@ const express = require('express');
 const Redis = require('redis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { addOrderItemId } = require('./services/orderItemServices.js');
+const { addOrderItemId } = require('./services/orderItemService.js');
 
 const app = express();
 const port = 3001;
