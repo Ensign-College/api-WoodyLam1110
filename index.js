@@ -1,7 +1,9 @@
+//import {addTrip, getTrip, updateTrip, updateTripFields, searchTrip, exactMatchTripFields, partiallyMatchTripFields} from './services/tripService.js';
 const express = require('express');
 const Redis = require('redis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { addOrderItemId } = require('./services/orderItemServices.js');
 
 const app = express();
 const port = 3001;
@@ -26,14 +28,6 @@ app.listen(port, async () => {
         console.error('Failed to connect to Redis:', error);
     }
 });
-
-// Function to add a new order item with orderId and timestamp as key
-async function addOrderItemId({redisClient, orderItem}) {
-    const timestamp = Date.now();
-    const uniqueKey = `orderId:${orderItem.orderId}:${timestamp}`;
-    await redisClient.json.set(uniqueKey, '$', orderItem);
-    return uniqueKey; // Return the key for confirmation
-}
 
 // POST endpoint to add a new order item
 app.post('/orderItems', async (req, res) => {
