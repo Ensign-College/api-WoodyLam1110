@@ -3,7 +3,7 @@ const express = require('express');
 const Redis = require('redis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { addOrderItemId } = require('./services/orderItemService.js');
+const { addOrderItemId } = require('./services/orderItemServices.js');
 
 const app = express();
 const port = 3001;
@@ -49,7 +49,13 @@ app.post('/orderItems', async (req, res) => {
     }
 });
 
+//Get endpoint to search for order item
+app.get('/orderItems',async (req,res)=>{
+    
+});
+
 console.log(`Server running on port ${port}`);
+console.log(`Server is up.`);
 
 
 // app.post('/boxes',async (req,res)=>{//async means we wait for the promise
