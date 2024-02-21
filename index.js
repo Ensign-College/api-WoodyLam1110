@@ -42,7 +42,7 @@ app.post('/orderItems', async (req, res) => {
             res.status(201).send("New orderItem has been created.");
         } catch (error) {
             console.error("Failed to add order item:", error);
-            res.status(500).send("Internal Server Error.");
+            res.status(500).send("Internal Server Error(App.Post).");
         }
     } else {
         res.status(400).send(`Missing required fields: ${missingFields.join(', ')}.`);
@@ -72,7 +72,8 @@ app.get('/orderItems/search', async (req, res) => {
         }
     } catch (error) {
         console.error("Error searching for order items:", error);
-        res.status(500).send("Internal Server Error.");
+        console.error(error.stack);
+        res.status(500).send("Internal Server Error(App.Get).");
     }
 });
 

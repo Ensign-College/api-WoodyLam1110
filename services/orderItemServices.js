@@ -17,7 +17,7 @@ async function addOrderItemId({redisClient, orderItem}) {
             const orderItemKey = `orderItem:${searchCriteria.orderItemId}`;
             const orderItem = await redisClient.json.get(orderItemKey);
             if (orderItem) {
-                results.push(JSON.parse(orderItem));
+                results.push(orderItem);
             }
         }
     
