@@ -8,4 +8,22 @@ async function addOrderItemId({redisClient, orderItem}) {
     return uniqueKey; // Return the key for confirmation
 }
 
-module.exports = { addOrderItemId };
+
+    async function searchOrderItem({ redisClient, searchCriteria }) {
+        let results = [];
+    
+        if (searchCriteria.orderItemId) {
+            // Assuming order items are stored with keys like "orderItem:{orderItemId}"
+            const orderItemKey = `orderItem:${searchCriteria.orderItemId}`;
+            const orderItem = await redisClient.get(orderItemKey);
+            if (orderItem) {
+                results.push(JSON.parse(orderItem));
+            }
+        }
+    
+    
+        return results;
+    }
+
+
+module.exports = { addOrderItemId,searchOrderItem };

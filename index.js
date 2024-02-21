@@ -3,7 +3,7 @@ const express = require('express');
 const Redis = require('redis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { addOrderItemId } = require('./services/orderItemServices.js');
+const { addOrderItemId,searchOrderItem } = require('./services/orderItemServices.js');
 
 const app = express();
 const port = 3001;
@@ -50,9 +50,33 @@ app.post('/orderItems', async (req, res) => {
 });
 
 //Get endpoint to search for order item
-app.get('/orderItems',async (req,res)=>{
-    
+app.get('/orderItems/search', async (req, res) => {
+    const { orderItemId, orderId } = req.query;
+
+    if (!orderItemId && !orderId) {
+        return res.status(400).send("Please provide at least one search criterion: orderItemId or orderId.");
+    }
+
+    let searchCriteria = {};
+    if (orderItemId) searchCriteria.orderItemId = orderItemId;
+    if (orderId) searchCriteria.orderId = orderId;
+
+    try {
+        const searchResults = await searchOrderItem({ redisClient, searchCriteria });
+
+        if (searchResults.length > 0) {
+            res.json(searchResults); // Send found order items as JSON
+        } else {
+            // Return a specific message when no matching order items are found
+            res.status(404).send("Order item not found.");
+        }
+    } catch (error) {
+        console.error("Error searching for order items:", error);
+        res.status(500).send("Internal Server Error.");
+    }
 });
+
+
 
 console.log(`Server running on port ${port}`);
 console.log(`Server is up.`);
