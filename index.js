@@ -51,31 +51,30 @@ app.post('/orderItems', async (req, res) => {
 
 //Get endpoint to search for order item
 app.get('/orderItems/search', async (req, res) => {
-    const { orderItemId, orderId } = req.query;
+    const { orderItemId } = req.query;
 
-    if (!orderItemId && !orderId) {
-        return res.status(400).send("Please provide at least one search criterion: orderItemId or orderId.");
+    // Basic validation to check if the orderItemId is provided
+    if (!orderItemId) {
+        return res.status(400).send("Please provide an orderItemId as a query parameter.");
     }
 
-    let searchCriteria = {};
-    if (orderItemId) searchCriteria.orderItemId = orderItemId;
-    if (orderId) searchCriteria.orderId = orderId;
-
     try {
-        const searchResults = await searchOrderItem({ redisClient, searchCriteria });
-
-        if (searchResults.length > 0) {
-            res.json(searchResults); // Send found order items as JSON
+        // Use the searchOrderItem function to search for the order item
+        const results = await searchOrderItem({ redisClient, searchCriteria: { orderItemId } });
+        
+        // Check if any order items were found
+        if (results.length > 0) {
+            res.json(results); // Send found order items as JSON
+            console.log("Search results:", results);
         } else {
-            // Return a specific message when no matching order items are found
-            res.status(404).send("Order item not found.");
+            // Respond with an appropriate message if no items are found
+            res.status(404).send("No order items found matching the given criteria.");
         }
     } catch (error) {
         console.error("Error searching for order items:", error);
         res.status(500).send("Internal Server Error.");
     }
 });
-
 
 
 console.log(`Server running on port ${port}`);
