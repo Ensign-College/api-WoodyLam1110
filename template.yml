@@ -19,7 +19,7 @@ Resources:
       Timeout: 30
       VpcConfig:
         SubnetIds:
-          - !Ref MySubnet
+          - subnet-02c217f126c0ce1d5
         SecurityGroupIds:
           - !Ref MyLambdaSecurityGroup
       Environment:
