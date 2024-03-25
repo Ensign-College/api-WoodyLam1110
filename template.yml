@@ -1,55 +1,66 @@
+天 10:21
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Handler: lambda.handler
 
 Resources:
-  CreateOrderFunction:
-    Type: AWS::Serverless::Function
+  MyLambdaFunction:
+    Type: 'AWS::Serverless::Function'
+展開
+message.txt
+3 KB
+﻿
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+  MyLambdaFunction:
+    Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: createOrder.lambdaHandler
-      Runtime: nodejs14.x
-      CodeUri: ./lambda
+      Handler: index.handler
+      Runtime: nodejs20.x
+      CodeUri: .
       MemorySize: 128
       Timeout: 30
-      Environment:
-        Variables:
-          REDIS_HOST: !GetAtt MyElasticacheRedis.RedisEndpointAddress
       VpcConfig:
         SubnetIds:
           - !Ref MySubnet
         SecurityGroupIds:
-          - !GetAtt MySecurityGroup.GroupId
+          - !Ref MyLambdaSecurityGroup
+      Environment:
+        Variables:
+          REDIS_HOST: !GetAtt MyElasticacheRedis.RedisEndpoint.Address
       Events:
-        HttpPostOrder:
+        OrdersPost:
           Type: Api
           Properties:
             Path: /orders
             Method: post
-
-  GetOrderFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: getOrder.lambdaHandler
-      Runtime: nodejs14.x
-      CodeUri: ./lambda
-      MemorySize: 128
-      Timeout: 30
-      Environment:
-        Variables:
-          REDIS_HOST: !GetAtt MyElasticacheRedis.RedisEndpointAddress
-      VpcConfig:
-        SubnetIds:
-          - !Ref MySubnet
-        SecurityGroupIds:
-          - !GetAtt MySecurityGroup.GroupId
-      Events:
-        HttpGetOrder:
+        OrdersGet:
           Type: Api
           Properties:
             Path: /orders/{orderId}
             Method: get
-  
-  # Define other Lambda functions following the structure of CreateOrderFunction and GetOrderFunction
+        OrderItemsPost:
+          Type: Api
+          Properties:
+            Path: /orderItems
+            Method: post
+        OrderItemsGet:
+          Type: Api
+          Properties:
+            Path: /orderItems/{orderItemId}
+            Method: get
+
+  MyLambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for Lambda function"
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          SourceSecurityGroupId: !Ref MySecurityGroup
 
   # MyVPC:
   #   Type: AWS::EC2::VPC
@@ -65,7 +76,7 @@ Resources:
   MyElasticacheSubnetGroup:
     Type: AWS::ElastiCache::SubnetGroup
     Properties:
-      Description: Subnet group for ElastiCache
+      Description: "Subnet group for ElastiCache"
       SubnetIds:
         - subnet-02c217f126c0ce1d5
 
@@ -83,10 +94,10 @@ Resources:
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Security group for Lambda function
+      GroupDescription: "Security group for ElastiCache"
       VpcId: vpc-066e6a637e37f2752
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 6379
           ToPort: 6379
-          CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId: !Ref MyLambdaSecurityGroup

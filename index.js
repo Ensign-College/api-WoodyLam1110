@@ -3,9 +3,11 @@ const Redis = require("redis");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
-const Ajv = require("ajv");
 const { addOrder, getOrder } = require("./services/orderservice.js");
 const { addOrderItem, getOrderItem } = require("./services/orderItems");
+const Ajv = require("ajv");
+const ajv = new Ajv();
+const orderItemSchema = JSON.parse(fs.readFileSync("./orderItemSchema.json", "utf8"));
 
 const app = express();
 
@@ -19,10 +21,6 @@ const redisClient = Redis.createClient({
 });
 redisClient.connect();
 
-// JSON schema validation setup
-const orderItemSchema = JSON.parse(fs.readFileSync("./orderItemSchema.json", "utf8"));
-const ajv = new Ajv();
-const validate = ajv.compile(orderItemSchema);
 
 // Order routes
 app.post("/orders", async (req, res) => {
