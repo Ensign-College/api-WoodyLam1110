@@ -1,14 +1,10 @@
-天 10:21
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 
 Resources:
   MyLambdaFunction:
     Type: 'AWS::Serverless::Function'
-展開
-message.txt
-3 KB
-﻿
+
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 
